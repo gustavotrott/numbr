@@ -4,7 +4,8 @@
   "description": "A smart calculator",
   "main": "index.js",
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "serve": "node -r ts-node/register server.ts"
   },
   "repository": "antonmedv/numbr",
   "keywords": [
