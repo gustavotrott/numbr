@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "ava",
-    "serve": "node -r ts-node/register server.ts"
+    "serve": "npm run build:runtime && node -r ts-node/register server.ts",
+    "build:runtime": "node scripts/build-runtime.js --outdir public",
+    "build:static": "node scripts/build-static.js"
   },
   "repository": "antonmedv/numbr",
   "keywords": [
@@ -15,7 +17,8 @@
   "license": "MIT",
   "homepage": "https://numbr.dev",
   "devDependencies": {
-    "ava": "^4.0.1"
+    "ava": "^4.0.1",
+    "esbuild": "^0.21.5"
   },
   "ava": {
     "files": [

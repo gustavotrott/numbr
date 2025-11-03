@@ -1,36 +1,65 @@
-<h1><img src="https://numbr.dev/numbr-logo.png" alt="Numbr logo" width="38" height="38" align="center"> Numbr</h1>
+# Numbr Playground
 
-*Numbr – a short for number.*
+This repository is a fork of [antonmedv/numbr](https://github.com/antonmedv/numbr) with a focus on providing a standalone playground for the Numbr language. You can run it locally with hot reload during development or export a fully static bundle that works entirely offline in a browser.
 
-Try it out on [numbr.dev](https://numbr.dev) or as
-a [Chrome extension](https://chrome.google.com/webstore/detail/numbr/cncafkneilkicolelogcmmgblojmhfng).
+## Requirements
 
-## What is it?
+- Node.js 18+
+- npm
 
-**Numbr** is an innovative, web-based application and Chrome extension designed to seamlessly integrate numbers and
-calculations into your browsing and note-taking experiences. It simplifies tasks such as arithmetic operations, currency
-conversions, and more in a user-friendly manner.
+Install dependencies once:
 
-## Features
+```bash
+npm install
+```
 
-Here are some of the features that make Numbr a versatile tool:
+## Available Commands
 
-- **Arithmetic Operations**: Add, subtract, multiply, divide, or calculate percentages on the fly.
-- **Currency Support**: Recognizes major currency symbols and ISO codes. Convert between currencies or cryptocurrencies with
-ease.
-- **Suffix Support**: Use 'k' for thousands and 'M' for millions to simplify your large numbers.
-- **Context Awareness**: Words around and between calculations are ignored, allowing you to add meaningful context to your
-calculations.
-- **Variable Assignment**: Assign values to variables and use them throughout your calculations.
-- **Summing Feature**: Easily calculate the sum of different lines of numbers.
-- **Text Filtering**: Non-highlighted numbers in a line of text are treated as non-numerical text, making your calculations
-accurate and clear.
-- **Sharing**: Share your calculations by simply copying the current link address, allowing for easy collaboration.
+| Command | Description |
+| --- | --- |
+| `npm test` | Run the TypeScript test suite (AVA). |
+| `npm run build:runtime` | Bundle the evaluator into `public/numbr.js` for development. |
+| `npm run serve` | Build the runtime bundle and start the hot-reload server on `http://localhost:3000`. |
+| `npm run build:static` | Produce a self-contained `dist/` folder that you can open directly in a browser. |
 
-## Documentation
+## Development Workflow
 
-[Documentation](./DOCS.md)
+1. Install dependencies (`npm install`).
+2. Start the playground with hot reload:
 
-## Become a sponsor
+   ```bash
+   npm run serve
+   ```
 
-Every line of code in my repositories 📖 signifies my unwavering commitment to open source 💡. Your support 🤝 ensures these projects keep thriving, innovating, and benefiting all 💼. If my work has ever resonated 🎵 or helped you, kindly consider showing love ❤️ by sponsoring. [**🚀 Sponsor Me Today! 🚀**](https://github.com/sponsors/antonmedv)
+   This command automatically bundles `public/numbr.js` and runs the development server with file watching. Open `http://localhost:3000` to start using the editor. Any edits to the codebase trigger hot reload in the browser.
+
+3. Run tests whenever you modify the evaluator:
+
+   ```bash
+   npm test
+   ```
+
+## Building a Static Bundle
+
+You can generate an offline-friendly bundle that does not require any server-side code.
+
+```bash
+npm run build:static
+```
+
+This command creates a `dist/` directory containing:
+
+- `index.html`
+- `numbr.js` (the bundled evaluator)
+- Additional static assets copied from `public/`
+
+Open `dist/index.html` directly in your browser (double-click or drag-and-drop into a tab). The runtime executes entirely in the browser and persists your number format preference and last edited document using `localStorage`.
+
+## Notes
+
+- The evaluator supports locale-aware input/output. Use the **Format** dropdown in the editor to switch between `1,234.56` and `1.234,56` styles. The choice is stored in `localStorage`.
+- When using the hot-reload server the page falls back to `/evaluate` while waiting for the runtime bundle. The static build relies solely on the bundled runtime and does not perform any network requests.
+
+## License
+
+The project inherits the MIT license from the original Numbr repository.
