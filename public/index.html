@@ -6,7 +6,7 @@
   <title>Numbr Playground</title>
   <style>
     :root {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "JetBrains Mono", "Fira Code", "Source Code Pro", Consolas, monospace;
       color: #111827;
       background: #f3f4f6;
     }
@@ -22,170 +22,254 @@
       padding: 32px 16px;
     }
     main {
-      width: min(1100px, 100%);
+      width: min(1200px, 100%);
       background: #fff;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 28px;
     }
     header h1 {
       margin: 0 0 8px;
-      font-size: 2.2rem;
+      font-size: 2.4rem;
     }
     header p {
       margin: 0;
       color: #6b7280;
+      font-size: 1rem;
     }
     .workspace {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      min-height: 420px;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 34%);
+      background: #111;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+      background: #f8fafc;
     }
-    .panel {
+    .column {
       display: flex;
       flex-direction: column;
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 20px;
-      border: 1px solid #e5e7eb;
-    }
-    .panel h2 {
-      margin: 0 0 16px;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #9ca3af;
-    }
-    textarea {
-      width: 100%;
-      flex: 1;
-      font-size: 1rem;
-      line-height: 1.5;
-      padding: 18px;
-      border-radius: 12px;
-      border: 1px solid #d1d5db;
-      resize: none;
       background: #fff;
-      font-family: "Fira Code", "Source Code Pro", Consolas, monospace;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    textarea:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    .column + .column {
+      border-left: 1px solid #d1d5db;
     }
-    .results {
-      flex: 1;
-      background: #111827;
-      color: #e5e7eb;
-      border-radius: 12px;
-      padding: 18px 16px;
-      overflow-y: auto;
-      font-family: "Fira Code", "Source Code Pro", Consolas, monospace;
-      position: relative;
-    }
-    .result-row {
-      display: grid;
-      grid-template-columns: 48px 1fr;
-      padding: 4px 8px;
-      gap: 12px;
-      min-height: 1.5rem;
-      align-items: flex-start;
-    }
-    .row-index {
+    .column-header {
+      padding: 16px 24px;
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
       color: #9ca3af;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
+      border-bottom: 1px solid #e2e8f0;
     }
-    .row-value {
-      font-size: 1.05rem;
+    .editor-shell {
+      position: relative;
+      flex: 1;
+      min-height: 320px;
+      background: #f9fafb;
+    }
+    .editor-shell textarea,
+    .editor-shell pre {
+      position: absolute;
+      inset: 0;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
-      line-height: 1.5;
+      tab-size: 4;
     }
-    .status {
-      min-height: 24px;
-      font-size: 0.9rem;
-      color: #9ca3af;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
+    .editor-shell textarea {
+      border: none;
+      resize: none;
+      outline: none;
+      background: transparent;
+      color: transparent;
+      caret-color: #111827;
+      overflow: hidden;
     }
-    .status[data-state="loading"]::before {
-      content: '';
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid #2563eb;
-      border-top-color: transparent;
-      animation: spin 0.8s linear infinite;
+    .editor-shell textarea::selection {
+      background: rgba(37, 99, 235, 0.35);
     }
-    .status[data-state="error"] {
-      color: #f87171;
+    .editor-shell pre {
+      overflow: hidden;
+      pointer-events: none;
+      color: #111827;
     }
-    .status[data-state="idle"] {
-      color: #6b7280;
+    .hl-line, .result-row {
+      background-color: transparent;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .hl-line:nth-child(odd), .result-row:nth-child(odd) {
+      background-color: #ffffff;
     }
-    .row-value.numbr {
-      color: #34d399;
+    .hl-line:nth-child(even), .result-row:nth-child(even) {
+      background-color: #f3f4f6;
     }
-    .row-value.percent {
-      color: #60a5fa;
+    .hl-line {
+      display: block;
+      min-height: 1.6em;
+      position: relative;
     }
-    .row-value.header {
+    .hl-line::after {
+      content: "";
+    }
+    .hl-line.line-header {
       color: #fbbf24;
-    }
-    .row-value.header strong {
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #fde68a;
     }
-    .row-value.description {
-      color: #a5b4fc;
+    .hl-line.line-description {
+      color: #9ca3af;
+      font-style: italic;
     }
-    .row-value.total {
+    .hl-line.line-total {
+      color: #f472b6;
+      font-weight: 600;
+      /*padding-top: 8px;*/
+      border-top: 1px dashed rgba(148, 163, 184, 0.6);
+    }
+    .hl-line.line-total .token-operator {
+        color: #f472b6;
+        /*font-size: 1.05rem;*/
+    }
+
+    .token-header {
+      color: #fbbf24;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+    .token-description {
+      color: #9ca3af;
+      font-style: italic;
+    }
+    .token-number {
+      color: #60a5fa;
+    }
+    .token-operator {
+      color: #f97316;
+    }
+    .token-variable {
+      color: #34d399;
+    }
+    .token-currency {
+      color: #f472b6;
+    }
+    .token-exp {
+      color: #a855f7;
+    }
+    .token-warning {
+      background: rgba(251, 191, 36, 0.15);
+      border-radius: 4px;
+      color: #92400e;
+      padding: 0 2px;
+    }
+    .token-total {
       color: #f472b6;
       font-weight: 600;
     }
-    .row-value.total::before {
-      content: 'Σ ';
+    .token-none {
+      color: inherit;
+    }
+    .results {
+      flex: 1;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      font-family: inherit;
+    }
+    .result-rows {
+      flex: 1;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .result-row {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      align-items: center;
+      color: #111827;
+      line-height: 1.6;
+      min-height: 1.6em;
+      padding: 0;
+    }
+    .result-row.total {
+      color: #f472b6;
+      font-weight: 600;
+      /*font-size: 1.05rem;*/
+      position: relative;
+      /*padding-top: 8px;*/
+      border-top: 1px dashed rgba(148, 163, 184, 0.6);
+    }
+    .row-index {
+      text-align: right;
+      color: #9ca3af;
+      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
+      padding-right: 12px;
+    }
+    .row-value {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .row-value.header {
+      color: #fbbf24;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .row-value.description {
+      color: #9ca3af;
+      font-style: italic;
     }
     .row-value.error {
-      color: #f87171;
+      color: #ef4444;
     }
     .row-value.nothing {
       color: #9ca3af;
     }
     .warning-list {
-      margin-top: 6px;
-      padding-left: 0;
+      margin: 6px 0 0;
+      padding: 0;
       list-style: none;
       font-size: 0.8rem;
-      color: #fbbf24;
+      color: #f59e0b;
     }
     .warning-list li::before {
       content: "⚠ ";
     }
-    .error-message {
-      margin-top: 4px;
-      font-size: 0.85rem;
-      color: #fca5a5;
+    .status {
+      padding: 16px 24px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+      color: #6b7280;
+      letter-spacing: 0.02em;
     }
-    @media (max-width: 900px) {
+    .status[data-state="loading"] {
+      color: #2563eb;
+    }
+    .status[data-state="error"] {
+      color: #ef4444;
+    }
+    @media (max-width: 960px) {
+      main {
+        padding: 28px 20px;
+      }
       .workspace {
         grid-template-columns: 1fr;
       }
-      .results {
-        min-height: 240px;
+      .column + .column {
+        border-left: none;
+        border-top: 1px solid #d1d5db;
+      }
+      .editor-shell {
+        min-height: 260px;
       }
     }
   </style>
@@ -194,47 +278,104 @@
   <main>
     <header>
       <h1>Numbr Playground</h1>
-      <p>Type notes on the left. The right side shows each line&rsquo;s evaluated value in real time.</p>
+      <p>Notes on the left, answers on the right – calculated as you type.</p>
     </header>
     <section class="workspace">
-      <div class="panel">
-        <h2>Editor</h2>
-        <textarea id="input" placeholder="Income 128000 usd / per 13 parts month - 25% tax rate
-sum"></textarea>
+      <div class="column editor-column">
+        <div class="column-header">Editor</div>
+        <div class="editor-shell">
+          <pre id="highlight" aria-hidden="true"></pre>
+          <textarea id="input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+        </div>
       </div>
-      <div class="panel">
-        <h2>Results</h2>
-        <div id="results" class="results"></div>
-        <div class="status" id="status" data-state="idle">Ready.</div>
+      <div class="column result-column">
+        <div class="column-header">Result</div>
+        <div class="results">
+          <div class="result-rows" id="results"></div>
+          <div class="status" id="status" data-state="idle">Ready.</div>
+        </div>
       </div>
     </section>
   </main>
   <script>
     const input = document.getElementById('input');
+    const highlight = document.getElementById('highlight');
+    const editorShell = document.querySelector('.editor-shell');
     const results = document.getElementById('results');
     const status = document.getElementById('status');
 
     let debounceHandle = null;
     let nextRequestId = 1;
     let latestCompletedId = 0;
+    let lastLines = [];
 
-    function renderLines(lines) {
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      }[ch]));
+    }
+
+    function buildLineHtml(text, segments, kind) {
+      const className = kind ? `hl-line line-${kind}` : 'hl-line';
+      if (!segments || segments.length === 0) {
+        const safe = text.length === 0 ? '&#8203;' : escapeHtml(text);
+        return `<span class="${className}">${safe}</span>`;
+      }
+      let html = '';
+      let cursor = 0;
+      const sorted = segments.slice().sort((a, b) => a.start - b.start || a.end - b.end);
+      for (const seg of sorted) {
+        const start = Math.max(0, Math.min(text.length, seg.start));
+        const end = Math.max(start, Math.min(text.length, seg.end));
+        if (start > cursor) {
+          html += escapeHtml(text.slice(cursor, start));
+        }
+        if (end > start) {
+          html += `<span class="token-${seg.tag}">${escapeHtml(text.slice(start, end))}</span>`;
+        }
+        cursor = Math.max(cursor, end);
+      }
+      if (cursor < text.length) {
+        html += escapeHtml(text.slice(cursor));
+      }
+      if (html.length === 0) {
+        html = '&#8203;';
+      }
+      return `<span class="${className}">${html}</span>`;
+    }
+
+    function renderHighlight(text, lineInfo = []) {
+      const lines = text.split(/\r?\n/);
+      const htmlLines = lines.map((line, index) => {
+        const info = lineInfo[index];
+        const segments = info?.highlight || [];
+        const lineKind = (info && (info.kind === 'header' || info.kind === 'description' || info.kind === 'total')) ? info.kind : undefined;
+        return buildLineHtml(line, segments, lineKind);
+      });
+      highlight.innerHTML = htmlLines.join('');
+      syncTextareaHeight();
+    }
+
+    function renderLines(lineInfo = []) {
       results.innerHTML = '';
-      lines.forEach((line, index) => {
+      lineInfo.forEach((line, index) => {
         const row = document.createElement('div');
         row.className = 'result-row';
+        if (line.kind === 'total') {
+          row.classList.add('total');
+        }
 
-        const idx = document.createElement('span');
+        const idx = document.createElement('div');
         idx.className = 'row-index';
         idx.textContent = String(index + 1).padStart(2, ' ');
 
         const value = document.createElement('div');
         value.className = `row-value ${line.kind || 'nothing'}`;
-        if (line.kind === 'header') {
-          const strong = document.createElement('strong');
-          strong.textContent = line.result || '';
-          value.appendChild(strong);
-        } else if (line.kind === 'description') {
+        if (line.kind === 'header' || line.kind === 'description') {
           value.textContent = line.result || '';
         } else {
           value.textContent = line.result || '';
@@ -256,25 +397,37 @@ sum"></textarea>
         results.appendChild(row);
       });
 
-      if (lines.length === 0) {
-        const emptyRow = document.createElement('div');
-        emptyRow.className = 'result-row';
-        const idx = document.createElement('span');
+      if (lineInfo.length === 0) {
+        const row = document.createElement('div');
+        row.className = 'result-row';
+        const idx = document.createElement('div');
         idx.className = 'row-index';
         idx.textContent = '--';
         const value = document.createElement('div');
         value.className = 'row-value nothing';
         value.textContent = 'No input';
-        emptyRow.appendChild(idx);
-        emptyRow.appendChild(value);
-        results.appendChild(emptyRow);
+        row.appendChild(idx);
+        row.appendChild(value);
+        results.appendChild(row);
       }
     }
 
-    async function evaluateNow(requestId, text) {
+    function syncTextareaHeight() {
+      input.style.height = 'auto';
+      highlight.style.height = 'auto';
+      const newHeight = Math.max(input.scrollHeight, 240);
+      input.style.height = `${newHeight}px`;
+      highlight.style.height = `${newHeight}px`;
+      editorShell.style.height = `${newHeight}px`;
+    }
+
+    async function evaluateNow(requestId, text, options = {}) {
+      const reason = options.reason || 'manual';
+      const message = options.message || (reason === 'hot' ? 'Hot reload…' : 'Calculating…');
+      const successMessage = options.successMessage || (reason === 'hot' ? 'Updated (hot reload).' : 'Updated.');
       try {
         status.dataset.state = 'loading';
-        status.textContent = 'Calculating…';
+        status.textContent = message;
         const response = await fetch('/evaluate', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
@@ -291,9 +444,11 @@ sum"></textarea>
         }
         const payload = await response.json();
         latestCompletedId = requestId;
+        lastLines = payload.lines || [];
         status.dataset.state = 'idle';
-        status.textContent = 'Updated.';
-        renderLines(payload.lines || []);
+        status.textContent = successMessage;
+        renderLines(lastLines);
+        renderHighlight(text, lastLines);
       } catch (error) {
         if (requestId < latestCompletedId) {
           return;
@@ -305,25 +460,64 @@ sum"></textarea>
 
     function scheduleEvaluation() {
       const text = input.value;
+      renderHighlight(text, lastLines);
       if (debounceHandle) {
         clearTimeout(debounceHandle);
       }
       debounceHandle = setTimeout(() => {
         const requestId = nextRequestId++;
         evaluateNow(requestId, text);
-      }, 180);
+      }, 160);
     }
 
     input.addEventListener('input', scheduleEvaluation);
-    input.addEventListener('keyup', (event) => {
-      if (event.key === 'Enter' && event.shiftKey) {
-        scheduleEvaluation();
+
+    function triggerHotReload(changePath) {
+      if (debounceHandle) {
+        clearTimeout(debounceHandle);
+        debounceHandle = null;
       }
-    });
+      const text = input.value;
+      renderHighlight(text, lastLines);
+      const requestId = nextRequestId++;
+      const pathMessage = changePath ? `Hot reload… (${changePath})` : undefined;
+      evaluateNow(requestId, text, {
+        reason: 'hot',
+        message: pathMessage,
+      });
+    }
+
+    if ('EventSource' in window) {
+      const events = new EventSource('/events');
+      events.addEventListener('message', (event) => {
+        if (!event.data) {
+          triggerHotReload();
+          return;
+        }
+        try {
+          const payload = JSON.parse(event.data);
+          if (payload.type === 'change') {
+            triggerHotReload(payload.path);
+          }
+        } catch (error) {
+          triggerHotReload();
+        }
+      });
+    }
+
+    window.addEventListener('resize', syncTextareaHeight);
 
     input.value = `Income 128000 usd / per 13 parts month - 25% tax rate
-sum`;
-    renderLines([]);
+sum
+
+# Travel
+: Flights
+2 tickets = 2 * $560
+sum
+
+a = 22
+a`;
+    renderHighlight(input.value, lastLines);
     scheduleEvaluation();
   </script>
 </body>
