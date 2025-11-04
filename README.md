@@ -2,6 +2,10 @@
 
 This repository is a fork of [antonmedv/numbr](https://github.com/antonmedv/numbr) with a focus on providing a standalone playground for the Numbr language. You can run it locally with hot reload during development or export a fully static bundle that works entirely offline in a browser.
 
+##
+
+Demo: https://gustavotrott.github.io/numbr/dist/
+
 ## Requirements
 
 - Node.js 18+
